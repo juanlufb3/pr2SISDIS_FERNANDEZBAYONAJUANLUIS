@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéSisDis — Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand">POKÉSISDIS</div>
+    <div class="nav-links">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/dashboard}" class="nav-link active">Dashboard</a>
+        <a th:href="@{/api-simulator}" class="nav-link">Simulador</a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="nav-link btn-logout">Salir</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>⚡ Panel de Control</h1>
+        <p>Bienvenido, entrenador <strong sec:authentication="name">usuario</strong>. Elige tu batalla:</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dash-card green">
+            <div class="dash-icon">✅</div>
+            <h3>Leer archivo OK</h3>
+            <p>La API Python lee un archivo que existe correctamente.</p>
+            <span class="dash-tag">GET /api/file-ok</span>
+        </div>
+        <div class="dash-card red">
+            <div class="dash-icon">❌</div>
+            <h3>Archivo no encontrado</h3>
+            <p>FileNotFoundError capturado y traducido para el entrenador.</p>
+            <span class="dash-tag">GET /api/file-error</span>
+        </div>
+        <div class="dash-card blue">
+            <div class="dash-icon">🗃️</div>
+            <h3>Consulta BD correcta</h3>
+            <p>Flask consulta la versión de PostgreSQL en Docker.</p>
+            <span class="dash-tag">GET /api/db-ok</span>
+        </div>
+        <div class="dash-card red">
+            <div class="dash-icon">💥</div>
+            <h3>Error de Base de Datos</h3>
+            <p>Credenciales inválidas → OperationalError capturado.</p>
+            <span class="dash-tag">GET /api/db-error</span>
+        </div>
+        <div class="dash-card yellow">
+            <div class="dash-icon">🐾</div>
+            <h3>PokeAPI correcta</h3>
+            <p>Consulta a la PokeAPI externa con éxito — pikachu encontrado.</p>
+            <span class="dash-tag">GET /api/pokemon/pikachu</span>
+        </div>
+        <div class="dash-card red">
+            <div class="dash-icon">🚫</div>
+            <h3>Pokémon inexistente</h3>
+            <p>HTTPError 404 de PokeAPI capturado por Spring Boot.</p>
+            <span class="dash-tag">GET /api/pokemon-error</span>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <h3>¿Cómo usar el simulador?</h3>
+        <p>
+            Ve al <a th:href="@{/api-simulator}">Simulador de API</a> y pulsa cualquier botón.
+            Spring Boot llama a Flask, captura la excepción y te muestra un mensaje claro en español.
+            Nunca verás un stacktrace — solo mensajes entendibles para el entrenador.
+        </p>
+    </div>
+</div>
+
+<footer class="footer">
+    <span>Práctica 2 · Sistemas Distribuidos · Spring Boot + Flask + PostgreSQL + Docker</span>
+</footer>
+</body>
+</html>

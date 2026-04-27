@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéSisDis — Sistema de Excepciones</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">POKÉSISDIS</div>
+    <div class="nav-links">
+        <a th:href="@{/}" class="nav-link active">Inicio</a>
+        <a th:href="@{/dashboard}" class="nav-link" sec:authorize="isAuthenticated()">Dashboard</a>
+        <a th:href="@{/api-simulator}" class="nav-link" sec:authorize="isAuthenticated()">Simulador</a>
+        <a th:href="@{/login}" class="nav-link btn-login" sec:authorize="isAnonymous()">▶ Jugar</a>
+        <form th:action="@{/logout}" method="post" style="display:inline" sec:authorize="isAuthenticated()">
+            <button type="submit" class="nav-link btn-logout">Salir</button>
+        </form>
+    </div>
+</nav>
+
+<main class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">✦ PRÁCTICA 2 · SISTEMAS DISTRIBUIDOS ✦</div>
+        <h1>Sistema de Gestión<br>de Excepciones</h1>
+        <p class="hero-subtitle">⚡ Spring Boot + Flask + PostgreSQL + Docker ⚡</p>
+        <p class="hero-desc">
+            Una aventura por el mundo de las excepciones distribuidas. Cada error
+            es una batalla que Spring Boot libra contra la API Python, capturando
+            excepciones y traduciéndolas antes de que lleguen al entrenador.
+        </p>
+
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="card-icon">🗃️</div>
+                <h3>Base de Datos</h3>
+                <p>Excepciones de PostgreSQL capturadas y traducidas al usuario sin romper la app.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">📄</div>
+                <h3>Archivos</h3>
+                <p>FileNotFoundError, PermissionError y OSError controlados desde Flask.</p>
+            </div>
+            <div class="feature-card">
+                <div class="card-icon">🌐</div>
+                <h3>PokeAPI</h3>
+                <p>Llamadas a la API externa con control de timeouts y errores HTTP.</p>
+            </div>
+        </div>
+
+        <div class="hero-actions">
+            <a th:href="@{/login}" class="btn btn-primary" sec:authorize="isAnonymous()">
+                ▶ Comenzar aventura
+            </a>
+            <a th:href="@{/api-simulator}" class="btn btn-secondary" sec:authorize="isAuthenticated()">
+                🧪 Ir al Simulador
+            </a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <span>Práctica 2 · Sistemas Distribuidos · 4º Ingeniería Informática</span>
+</footer>
+</body>
+</html>

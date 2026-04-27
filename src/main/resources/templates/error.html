@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéSisDis — Error</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand">POKÉSISDIS</div>
+    <div class="nav-links">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="error-page">
+
+        <img th:src="@{/images/error-sprite.png}"
+             alt="Error sprite"
+             class="error-sprite"
+             onerror="this.style.display='none'">
+
+        <h1 th:text="${tipoError ?: '¡Un error salvaje apareció!'}">
+            ¡Un error salvaje apareció!
+        </h1>
+
+        <div class="error-card">
+            <p class="error-main-msg"
+               th:text="${mensajeError ?: 'Ha ocurrido un error inesperado en la aplicación.'}">
+            </p>
+
+            <div th:if="${detalleError != null and !#strings.isEmpty(detalleError)}"
+                 class="error-detail-box">
+                <strong>Detalle técnico:</strong>
+                <pre th:text="${detalleError}"></pre>
+            </div>
+
+            <div th:if="${critico}" class="critico-aviso">
+                ⚠️ Este error es <strong>crítico</strong>. La operación no pudo completarse.
+            </div>
+        </div>
+
+        <div class="error-actions">
+            <a th:href="@{/dashboard}" class="btn btn-primary">← Volver al Dashboard</a>
+            <a th:href="@{/api-simulator}" class="btn btn-secondary">🧪 Ir al Simulador</a>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <span>Práctica 2 · Sistemas Distribuidos · Spring Boot + Flask + PostgreSQL + Docker</span>
+</footer>
+</body>
+</html>

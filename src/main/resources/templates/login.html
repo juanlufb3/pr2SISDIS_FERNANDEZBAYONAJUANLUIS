@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéSisDis — Acceder</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="login-body">
+
+<div class="login-wrapper">
+
+    <!-- Panel decorativo izquierdo -->
+    <div class="login-deco">
+        <img th:src="@{/images/pokeball.png}" alt="Pokéball" onerror="this.style.display='none'">
+        <h2>POKÉSISDIS<br>TRAINER LOGIN</h2>
+    </div>
+
+    <!-- Formulario -->
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-icon">🔐</div>
+            <h2>IDENTIFICATE,<br>ENTRENADOR</h2>
+            <p>Accede al sistema de gestión de excepciones</p>
+        </div>
+
+        <div th:if="${errorMsg}" class="alert alert-error">
+            ⚠️ <span th:text="${errorMsg}"></span>
+        </div>
+        <div th:if="${logoutMsg}" class="alert alert-success">
+            ✅ <span th:text="${logoutMsg}"></span>
+        </div>
+
+        <form th:action="@{/login}" method="post" class="login-form">
+            <div class="form-group">
+                <label for="username">Nombre de entrenador</label>
+                <input type="text" id="username" name="username"
+                       placeholder="admin o usuario" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña secreta</label>
+                <input type="password" id="password" name="password"
+                       placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+                ▶ Entrar al mundo Pokémon
+            </button>
+        </form>
+
+        <div class="login-hint">
+            <p>Entrenadores disponibles:</p>
+            <code>admin / admin123</code> &nbsp;·&nbsp; <code>usuario / user123</code>
+        </div>
+
+        <div class="login-back">
+            <a th:href="@{/}">← Volver al inicio</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

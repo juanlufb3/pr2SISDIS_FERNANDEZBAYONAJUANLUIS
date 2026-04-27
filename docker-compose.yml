@@ -1,0 +1,36 @@
+services:
+
+  # BASE DE DATOS POSTGRESQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: sisdis_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       sisdis_db
+      POSTGRES_USER:     sisdis
+      POSTGRES_PASSWORD: sisdis123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sisdis -d sisdis_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API FLASK PYTHON
+  python-api:
+    build: ./python-api
+    container_name: sisdis_flask
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://sisdis:sisdis123@postgres:5432/sisdis_db
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

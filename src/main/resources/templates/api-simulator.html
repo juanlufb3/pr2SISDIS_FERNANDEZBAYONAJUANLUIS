@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SisDisApp - API Simulator</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand">🔧 SisDisApp</div>
+    <div class="nav-links">
+        <a th:href="@{/}" class="nav-link">Inicio</a>
+        <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+        <a th:href="@{/api-simulator}" class="nav-link active">API Simulator</a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="nav-link btn-logout">Cerrar sesión</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <h1>🧪 Simulador de API Python</h1>
+        <p>Invoca la API Flask y observa cómo Spring Boot captura y traduce cada excepción.</p>
+    </div>
+
+    <!-- PANEL DE BOTONES -->
+    <div class="simulator-panel">
+        <h2>Selecciona un endpoint para invocar</h2>
+        <div class="endpoint-grid">
+
+            <div class="endpoint-section">
+                <h3>📄 Excepciones de Archivos</h3>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/file-ok">
+                    <button type="submit" class="btn btn-green">✅ Leer archivo OK</button>
+                </form>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/file-error">
+                    <button type="submit" class="btn btn-red">❌ FileNotFoundError</button>
+                </form>
+            </div>
+
+            <div class="endpoint-section">
+                <h3>🗃️ Excepciones de Base de Datos</h3>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/db-ok">
+                    <button type="submit" class="btn btn-green">✅ Consulta BD OK</button>
+                </form>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/db-error">
+                    <button type="submit" class="btn btn-red">❌ Error conexión BD</button>
+                </form>
+            </div>
+
+            <div class="endpoint-section">
+                <h3>🌐 Excepciones de API Externa (Pokémon)</h3>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/pokemon/pikachu">
+                    <button type="submit" class="btn btn-green">✅ Pokémon OK (pikachu)</button>
+                </form>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/pokemon-error">
+                    <button type="submit" class="btn btn-red">❌ Pokémon inexistente (404)</button>
+                </form>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+                    <input type="hidden" name="endpoint" value="/api/pokemon-timeout">
+                    <button type="submit" class="btn btn-yellow">⏱️ Timeout API externa (504)</button>
+                </form>
+            </div>
+
+            <div class="endpoint-section">
+                <h3>⚙️ Endpoint personalizado</h3>
+                <form th:action="@{/api-simulator/llamar}" method="post" class="custom-form">
+                    <input type="text" name="endpoint" placeholder="/api/file-ok" class="input-endpoint">
+                    <button type="submit" class="btn btn-primary">→ Invocar</button>
+                </form>
+                <p class="hint">Escribe cualquier ruta Flask. Útil para pruebas con Postman.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTADO ÉXITO -->
+    <div th:if="${exito != null and exito}" class="result-panel result-success">
+        <div class="result-header">
+            <span class="result-badge badge-ok">✅ Respuesta OK</span>
+            <span class="result-url" th:text="${endpointLlamado}"></span>
+            <span class="result-status" th:text="'HTTP ' + ${statusCode}"></span>
+        </div>
+        <div class="result-body">
+            <table class="result-table" th:if="${resultado != null}">
+                <tr th:if="${resultado.resultado != null}">
+                    <td class="td-key">Resultado</td>
+                    <td th:text="${resultado.resultado}"></td>
+                </tr>
+                <tr th:if="${resultado.nombre != null}">
+                    <td class="td-key">Pokémon</td>
+                    <td th:text="${resultado.nombre}"></td>
+                </tr>
+                <tr th:if="${resultado.id != null}">
+                    <td class="td-key">ID Pokédex</td>
+                    <td th:text="${resultado.id}"></td>
+                </tr>
+                <tr th:if="${resultado.peso != null}">
+                    <td class="td-key">Peso</td>
+                    <td th:text="${resultado.peso} + ' hg'"></td>
+                </tr>
+                <tr th:if="${resultado.altura != null}">
+                    <td class="td-key">Altura</td>
+                    <td th:text="${resultado.altura} + ' dm'"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- RESULTADO ERROR -->
+    <div th:if="${exito != null and !exito}" class="result-panel result-error">
+        <div class="result-header">
+            <span class="result-badge badge-error">❌ Excepción capturada</span>
+            <span class="result-url" th:text="${endpointLlamado}"></span>
+        </div>
+        <div class="result-body">
+            <div class="error-type">
+                <strong>Tipo de excepción:</strong>
+                <code th:text="${tipoExcepcion}"></code>
+            </div>
+            <div class="error-msg">
+                <strong>Mensaje traducido para el usuario:</strong>
+                <p th:text="${mensajeError}"></p>
+            </div>
+            <div class="error-detail" th:if="${detalleError != null and !#strings.isEmpty(detalleError)}">
+                <strong>Detalle técnico:</strong>
+                <pre th:text="${detalleError}"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA POSTMAN -->
+    <div class="postman-box">
+        <h3>📬 Endpoints disponibles para Postman</h3>
+        <p>La API Python corre en <code>http://localhost:5000</code></p>
+        <table class="postman-table">
+            <thead>
+            <tr><th>Método</th><th>URL</th><th>Excepción simulada</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>GET</td><td>/api/file-ok</td><td>Ninguna — éxito</td></tr>
+            <tr><td>GET</td><td>/api/file-error</td><td>FileNotFoundError → 404</td></tr>
+            <tr><td>GET</td><td>/api/db-ok</td><td>Ninguna — éxito</td></tr>
+            <tr><td>GET</td><td>/api/db-error</td><td>OperationalError (BD) → 500</td></tr>
+            <tr><td>GET</td><td>/api/pokemon/pikachu</td><td>Ninguna — éxito</td></tr>
+            <tr><td>GET</td><td>/api/pokemon-error</td><td>HTTPError 404 PokeAPI</td></tr>
+            <tr><td>GET</td><td>/api/pokemon-timeout</td><td>Timeout → 504</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="endpoint-section">
+        <h3>📊 Estadísticas de sesión</h3>
+        <form th:action="@{/api-simulator/llamar}" method="post" class="inline-form">
+            <input type="hidden" name="endpoint" value="/api/stats">
+            <button type="submit" class="btn btn-primary" style="width:100%; text-align:left;">
+                📈 Ver estadísticas de llamadas
+            </button>
+        </form>
+        <p class="hint">Muestra cuántas veces se invocó cada endpoint en esta sesión Docker.</p>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>Práctica 2 · Sistemas Distribuidos · Spring Boot + Flask + PostgreSQL + Docker</p>
+</footer>
+</body>
+</html>
