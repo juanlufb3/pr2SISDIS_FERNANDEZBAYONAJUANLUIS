@@ -1,0 +1,385 @@
+{
+  "info": {
+    "_postman_id": "26809214-239f-4884-a2e0-66c139e609d7",
+    "name": "Practica 2 - Sist Dist",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54162163",
+    "_collection_link": "https://go.postman.co/collection/54162163-26809214-239f-4884-a2e0-66c139e609d7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Flask API directa",
+      "item": [
+        {
+          "name": "[OK] Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[OK] Leer archivo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/file-ok",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "file-ok"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[ERROR] FileNotFoundError",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/file-error",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "file-error"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[OK] Consulta BD PostgreSQL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/db-ok",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "db-ok"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[ERROR] OperationalError BD",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/db-error",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "db-error"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[OK] Pokemon pikachu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/pokemon/pikachu",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "pokemon",
+                "pikachu"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[ERROR] HTTPError 404 PokeAPI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/pokemon-error",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "pokemon-error"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[ERROR] Timeout API externa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/pokemon-timeout",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "pokemon-timeout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[INFO] Estadísticas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/stats",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Spring Boot -> Flask",
+      "item": [
+        {
+          "name": "[Spring→Flask] FileNotFoundError capturado",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "admin123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "endpoint",
+                  "value": "/api/file-error",
+                  "type": "text",
+                  "uuid": "b720dec5-f05d-4eb9-8186-673f8b41a6a9"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api-simulator/llamar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api-simulator",
+                "llamar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Spring→Flask] OperationalError BD capturado",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "admin123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "endpoint",
+                  "value": "/api/db-error",
+                  "type": "text",
+                  "uuid": "5af3fd2d-108d-417d-a777-431785023f43"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api-simulator/llamar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api-simulator",
+                "llamar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Spring→Flask] HTTPError Pokemon capturado",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "admin123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "endpoint",
+                  "value": "/api/pokemon-error",
+                  "type": "text",
+                  "uuid": "fdfb201a-40e0-462c-87d4-137e6e111602"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api-simulator/llamar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api-simulator",
+                "llamar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "[Spring→Flask] ResourceAccessException - API caída",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "admin123",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "endpoint",
+                  "value": "/api/file-ok",
+                  "type": "text",
+                  "uuid": "9f6f9556-7f85-4deb-9e79-36fe995e4c36"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api-simulator/llamar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api-simulator",
+                "llamar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -14,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class Practica2Application {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(Practica2Application.class, args);
+		// arranca todo Spring Boot: escanea clases, conecta BD, levanta servidor
 	}
 
 	// Crea usuarios de prueba automáticamente al arrancar
@@ -22,17 +24,22 @@ public class Practica2Application {
 	CommandLineRunner initData(UserRepository userRepo,
 	                           RoleRepository roleRepo,
 	                           PasswordEncoder encoder) {
+		// este metodo se ejecuta automaticamente justo despues del arranque
+
 		return args -> {
 			if (roleRepo.count() == 0) {
+				// solo inserta datos si la BD esta vacia, evita duplicados
 				Role admin = new Role(null, "ROLE_ADMIN", 1);
 				Role user  = new Role(null, "ROLE_USER",  1);
 				roleRepo.save(admin);
 				roleRepo.save(user);
+				// guarda los dos roles en la tabla role
 
 				User adminUser = new User();
 				adminUser.setUsername("admin");
 				adminUser.setEmail("admin@sisdis.com");
 				adminUser.setPassword(encoder.encode("admin123"));
+				// encode() cifra la contraseña con BCrypt, nunca se guarda en texto plano
 				adminUser.setUserRole(admin);
 				userRepo.save(adminUser);
 

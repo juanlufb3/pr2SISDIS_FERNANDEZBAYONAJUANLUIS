@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // el id se genera solo
     private Integer id;
 
     @Column(name = "username", length = 50, unique = true, nullable = false)
@@ -23,7 +23,7 @@ public class User implements Serializable {
     @Column(name = "password", length = 250, nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
+    @ManyToOne(fetch = FetchType.EAGER) //muchos usuarios pueden tener el mismo rol
+    @JoinColumn(name = "role_id") // cuando cargues un usuario, carga su rol tambien en la misma consulta
     private Role userRole;
 }
