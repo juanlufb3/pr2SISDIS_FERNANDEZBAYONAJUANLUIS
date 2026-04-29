@@ -14,6 +14,7 @@ El objetivo es implementar un sistema distribuido de tres capas que demuestre la
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Requisitos previos](#requisitos-previos)
 - [Configuración y arranque](#configuración-y-arranque)
+- [Guía de navegación de la aplicación](#guía-de-navegación-de-la-aplicación)
 - [Endpoints de la API Flask](#endpoints-de-la-api-flask)
 - [Gestión de excepciones implementada](#gestión-de-excepciones-implementada)
 - [Seguridad](#seguridad)
@@ -234,6 +235,165 @@ http://localhost:8080
 ```
 
 ---
+
+## Guía de navegación de la aplicación
+
+Esta sección describe paso a paso cómo navegar por la aplicación y dónde se puede comprobar cada requisito del enunciado. Se recomienda seguir el orden indicado.
+
+---
+
+### Requisito 1 — Página principal
+
+Abrir el navegador y acceder a: http://localhost:8080
+
+Se muestra la página principal pública. No es necesario estar autenticado para verla. Contiene una descripción del sistema y tres tarjetas que resumen los tres tipos de excepciones implementadas. En la esquina superior derecha hay un botón rojo "▶ Jugar" que lleva a la pantalla de login.
+
+---
+
+### Requisito 2 — Pantalla de login
+
+Pulsar el botón "▶ Jugar" o acceder directamente a: http://localhost:8080/login
+
+Se muestra el formulario de login. Introducir las siguientes credenciales de prueba:
+
+Usuario:     admin
+Contraseña:  admin123
+
+Pulsar "Entrar al mundo Pokémon".
+
+**Comprobación de error en el login:** si se introducen credenciales incorrectas (por ejemplo usuario `admin` y contraseña incorrecta) y se pulsa el botón, la aplicación no redirige ni muestra ninguna pantalla de error genérica. Permanece en la misma pantalla de login y muestra el mensaje "Usuario o contraseña incorrectos" en un recuadro rojo encima del formulario. Este es el comportamiento correcto para excepciones de autenticación.
+
+Tras un login correcto la aplicación redirige automáticamente al Dashboard.
+
+---
+
+### Requisito 3 — Pantalla de simulación de API de terceros
+
+Tras hacer login se llega al Dashboard. En la barra de navegación superior pulsar el enlace "Simulador" o acceder directamente a: http://localhost:8080/api-simulator
+
+Esta es la pantalla principal de la práctica. Aquí se pueden lanzar todas las invocaciones a la API Python y observar cómo se tratan las excepciones.
+
+La pantalla está dividida en cuatro bloques de botones:
+
+#### Bloque 1 — Excepciones de apertura y lectura de archivos
+
+**Botón verde "✅ Leer archivo OK"**
+Pulsar este botón. La aplicación llama a la API Python, que lee un archivo de texto correctamente. Aparece un panel verde en la parte inferior de la pantalla con el contenido del archivo. No hay ninguna excepción.
+
+**Botón rojo "❌ FileNotFoundError"**
+Pulsar este botón. La aplicación llama a la API Python, que intenta abrir un archivo que no existe. Python lanza `FileNotFoundError`. Flask lo captura y devuelve un JSON de error con código HTTP 404. Spring Boot recibe el 404, lo intercepta con `HttpClientErrorException` y muestra en el panel inferior un recuadro rojo con:
+
+- El tipo de excepción: `HttpClientErrorException 404`
+- El mensaje traducido al español: "Recurso no encontrado. Puede que el Pokemon no exista o el archivo no esté."
+- El detalle técnico: el JSON exacto que devolvió Flask
+
+En ningún momento se muestra un stacktrace. La aplicación continúa funcionando con normalidad.
+
+#### Bloque 2 — Excepciones de acceso a base de datos
+
+**Botón verde "✅ Consulta BD OK"**
+Pulsar este botón. Flask se conecta a PostgreSQL (que está corriendo en Docker) y ejecuta `SELECT version()`. Aparece el panel verde con la versión exacta de PostgreSQL instalada. Esto demuestra que la API Python accede a la base de datos correctamente.
+
+**Botón rojo "❌ Error conexión BD"**
+Pulsar este botón. Flask intenta conectarse a una base de datos con credenciales incorrectas y un host inexistente. Python lanza `psycopg2.OperationalError`. Aparece el panel rojo con:
+
+- El tipo de excepción: `HttpServerErrorException 500`
+- El mensaje traducido: "Error interno en el servidor Python. Puede ser un fallo de base de datos o de lectura de archivo."
+- El detalle técnico con el error de psycopg2
+
+#### Bloque 3 — Excepciones de llamadas a API externa (PokeAPI)
+
+**Botón verde "✅ Pokémon OK (pikachu)"**
+Pulsar este botón. Flask llama a la API externa `pokeapi.co` buscando a pikachu. La PokeAPI responde correctamente. Aparece el panel verde con el nombre, ID, peso y altura de pikachu.
+
+> **Nota:** este botón requiere conexión a internet ya que llama a una API externa real.
+
+**Botón rojo "❌ Pokémon inexistente (404)"**
+Pulsar este botón. Flask llama a la PokeAPI buscando un Pokémon con un nombre que no existe. La PokeAPI devuelve 404. Flask captura `requests.HTTPError` y lo devuelve a Spring Boot. Aparece el panel rojo con el error 404 traducido.
+
+**Botón amarillo "⏱️ Timeout API externa (504)"**
+Pulsar este botón y esperar 2-3 segundos. Flask llama a un servicio externo que tarda 30 segundos en responder, pero Flask tiene configurado un timeout de 2 segundos. Python lanza `requests.Timeout`. Aparece el panel rojo con:
+
+- El tipo de excepción: `HttpServerErrorException 504`
+- El mensaje traducido: "Timeout al llamar a la PokeAPI u otro servicio externo (504)."
+
+Este es el caso más ilustrativo de excepción de API de terceros.
+
+#### Bloque 4 — Endpoint personalizado
+
+Permite escribir cualquier ruta de la API Flask manualmente y ejecutarla. Por ejemplo escribir `/api/file-error` y pulsar "→ Invocar". Es útil para probar rutas directamente desde el navegador sin usar Postman.
+
+#### Cómo se ve un resultado en pantalla
+
+Tras pulsar cualquier botón aparece un panel debajo de los botones:
+
+**Si la llamada fue exitosa** aparece un panel con borde y fondo verde con:
+- La etiqueta "✅ Respuesta OK"
+- La URL exacta que se ha invocado
+- El código HTTP recibido (200)
+- Una tabla con los datos de la respuesta
+
+**Si hubo una excepción** aparece un panel con borde y fondo rojo con:
+- La etiqueta "❌ Excepción capturada"
+- La URL que se intentó invocar
+- El tipo de excepción de Spring Boot que la capturó
+- El mensaje traducido al español
+- El detalle técnico (el JSON raw de Flask)
+
+En ningún caso se muestra una página de error ni un stacktrace. La aplicación siempre devuelve la misma pantalla del simulador, tanto si hubo éxito como si hubo error. Esto es el comportamiento requerido por el enunciado: las excepciones no críticas se muestran traducidas en el propio frontend.
+
+---
+
+### Requisito 4 — API Python con acceso a base de datos
+
+La API Flask corre en `http://localhost:5000`. Se puede acceder directamente desde el navegador o desde Postman para ver las respuestas JSON sin procesar.
+
+Para comprobar que la API Python accede correctamente a la base de datos, abrir en el navegador: http://localhost:5000/api/db-ok
+
+La respuesta mostrará directamente la versión de PostgreSQL en formato JSON, lo que confirma que Flask está conectado a la base de datos.
+
+Para ver el error de base de datos en crudo (sin pasar por Spring Boot): http://localhost:5000/api/db-error
+
+Se verá el JSON con el tipo exacto de excepción Python: `psycopg2.OperationalError`.
+
+---
+
+### Resumen visual de la navegación
+
+```
+http://localhost:8080               → Página principal (pública)
+        │
+        │ Pulsar "▶ Jugar"
+        ▼
+http://localhost:8080/login         → Login (introducir admin / admin123)
+        │
+        │ Login correcto
+        ▼
+http://localhost:8080/dashboard     → Dashboard con resumen de escenarios
+        │
+        │ Pulsar "Simulador" en la navbar
+        ▼
+http://localhost:8080/api-simulator → PANTALLA PRINCIPAL DE LA PRÁCTICA
+        │
+        ├── Botón verde archivo     → Panel verde (éxito)
+        ├── Botón rojo archivo      → Panel rojo (FileNotFoundError)
+        ├── Botón verde BD          → Panel verde (versión PostgreSQL)
+        ├── Botón rojo BD           → Panel rojo (OperationalError)
+        ├── Botón verde Pokemon     → Panel verde (datos pikachu)
+        ├── Botón rojo Pokemon      → Panel rojo (HTTPError 404)
+        └── Botón amarillo Timeout  → Panel rojo (Timeout 504)
+```
+
+---
+
+### Si algo no funciona
+
+| Síntoma | Causa probable | Solución |
+|---|---|---|
+| La página no carga | Spring Boot no está arrancado | Ejecutar `Practica2Application.java` desde IntelliJ |
+| Panel rojo en todos los botones con "No se pudo conectar" | Flask o Docker no está corriendo | Ejecutar `docker compose up -d` en la terminal |
+| Botón de Pokémon no funciona | Sin conexión a internet | Verificar la conexión |
+| El login no redirige al dashboard | Las tablas no existen o están vacías | Reiniciar Spring Boot para que el `CommandLineRunner` cree los datos |
 
 ## Endpoints de la API Flask
 
